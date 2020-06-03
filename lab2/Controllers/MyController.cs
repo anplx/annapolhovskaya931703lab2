@@ -56,15 +56,18 @@ namespace lab2.Controllers
         }
         public IActionResult ManualView(int? num1, string act, int? num2)
         {
-            if (num1 == null & num2 == null)
+            if (Request.Method == "GET")
                 return View("ManualView");
+            if (Request.Method == "POST")
+            {
+                Tuple<string, string> resmap = Actions(num1, act, num2);
 
-            Tuple<string, string> resmap = Actions(num1, act, num2);
+                string data = $"{num1} {resmap.Item1} {num2} = {resmap.Item2}";
+                ViewData["Result"] = data;
 
-            string data = $"{num1} {resmap.Item1} {num2} = {resmap.Item2}";
-            ViewData["Result"] = data;
-
-            return View("ResultView");
+                return View("ResultView");
+            }
+            return View("Index");
         }
         [HttpGet]
         public IActionResult ManualWithSeparateHandlersView()
@@ -89,7 +92,7 @@ namespace lab2.Controllers
         [HttpPost]
         public IActionResult ModelBindingParamView(int mnum1, string mact, int mnum2)
         {
-            Tuple<string, string> resmap = myModel.Actions(mnum1, mact, mnum2);
+            Tuple<string, string> resmap = this.Actions(mnum1, mact, mnum2);
 
             string data = $"{mnum1} {resmap.Item1} {mnum2} = {resmap.Item2}";
             ViewData["Result"] = data;
@@ -104,7 +107,7 @@ namespace lab2.Controllers
         [HttpPost]
         public IActionResult ModelBindingSeparateView(MyModel model)
         {
-            Tuple<string, string> resmap = Actions(model.num1, model.act, model.num2);
+            Tuple<string, string> resmap = this.Actions(model.num1, model.act, model.num2);
 
             string data = $"{model.num1} {resmap.Item1} {model.num2} = {resmap.Item2}";
             ViewData["Result"] = data;
